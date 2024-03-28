@@ -33,6 +33,7 @@ jobs:
         run: |
           julia --project=docs/ -e '
             using Pkg
+            Pkg.add(; name="PotentialLearning", rev="main")
             Pkg.add(; url = "https://github.com/joannajzou/ActiveSubspaces.jl")
             Pkg.develop(PackageSpec(path=pwd()))
             Pkg.instantiate()
