@@ -40,6 +40,16 @@ jobs:
       - uses: julia-actions/julia-uploadcoveralls@v1
         env:
           COVERALLS_TOKEN: ${{ secrets.COVERALLS_TOKEN }}
+      - name: add CESMIX registry
+        run: |
+          julia -e '
+            using Pkg
+            Pkg.Registry.add("General")
+            Pkg.Registry.add(RegistrySpec(url = "https://github.com/cesmix-mit/CESMIX.git"))
+            Pkg.Registry.add(RegistrySpec(url = "https://github.com/JuliaMolSim/MolSim.git"))
+            Pkg.Registry.add(RegistrySpec(url = "https://github.com/ACEsuit/ACEregistry"))
+          '
+        shell: bash
   docs:
     name: Documentation
     runs-on: ubuntu-latest
