@@ -14,7 +14,7 @@ function plot_step(
         throw(ArgumentError("loggers does not include StepComponentLogger"))
     end
     # create figure
-    fig = Figure(resolution = (800, 400))
+    fig = Figure(size = (800, 400))
     # set axes
     if logscl == true
         ax = Axis(fig[1, 1][1, 1], 
@@ -59,7 +59,7 @@ function plot_step(
         throw(ArgumentError("loggers does not include StepComponentLogger"))
     end
     # create figure
-    fig = Figure(resolution = (800, 400))
+    fig = Figure(size = (800, 400))
     # set axes
     if logscl == true
         ax = Axis(fig[1, 1][1, 1], 
@@ -109,7 +109,7 @@ function plot_step_hist(
     axs = Vector{Axis}(undef, length(intervals))
 
     for i = 1:length(intervals)
-        figs[i] = Figure(resolution = (800, 400))
+        figs[i] = Figure(size = (800, 400))
         # set axes
         if logscl == true
             axs[i] = Axis(figs[i][1, 1][1, 1], 
@@ -156,7 +156,7 @@ function plot_step_hist(
     axs = Vector{Axis}(undef, length(intervals))
 
     for i = 1:length(intervals)
-        figs[i] = Figure(resolution = (800, 400))
+        figs[i] = Figure(size = (800, 400))
         # set axes
         if logscl == true
             axs[i] = Axis(figs[i][1, 1][1, 1], 
@@ -201,7 +201,7 @@ function plot_step_mean(
         throw(ArgumentError("loggers does not include StepComponentLogger"))
     end
     # create figure
-    fig = Figure(resolution = (800, 400))
+    fig = Figure(size = (800, 400))
     # set axes
     if logscl == true
         ax = Axis(fig[1, 1][1, 1], 

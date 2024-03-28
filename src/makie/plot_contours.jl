@@ -58,7 +58,7 @@ function plot_contours_2D(
         end
     end
 
-    fig = Figure(resolution = res)
+    fig = Figure(size = res)
     ax = Axis(fig[1, 1][1, 1], 
             xlabel="x1", ylabel="x2",
             limits=(
@@ -107,7 +107,7 @@ function plot_contours_2D(
     cutoffs::Tuple = (-Inf, Inf),
     res::Tuple = (700,600),
 )
-    potential_func(coords) = SteinMD.potential_double_well(inter, coords)
+    potential_func(coords) = Cairn.potential_double_well(inter, coords)
     return plot_contours_2D(potential_func, xcoords, ycoords, "V(x)", fill=fill, lvls=lvls, cutoffs=cutoffs, res=res)
 end
 
@@ -122,7 +122,7 @@ function plot_contours_2D(
     res::Tuple = (700,600),
     ttl::String = "",
 )
-    potential_func(coords) = SteinMD.potential_himmelblau(inter, coords)
+    potential_func(coords) = Cairn.potential_himmelblau(inter, coords)
     return plot_contours_2D(potential_func, xcoords, ycoords, "V(x)", fill=fill, lvls=lvls, cutoffs=cutoffs, res=res, ttl=ttl)
 end
 
@@ -136,7 +136,7 @@ function plot_contours_2D(
     cutoffs::Tuple = (-Inf, Inf),
     res::Tuple = (700,600),
 )
-    potential_func(coords) = SteinMD.potential_sinusoid(inter, coords)
+    potential_func(coords) = Cairn.potential_sinusoid(inter, coords)
     return plot_contours_2D(potential_func, xcoords, ycoords, "V(x)", fill=fill, lvls=lvls, cutoffs=cutoffs, res=res)
 end
 
@@ -179,7 +179,7 @@ function plot_contours_2D(
     res::Tuple = (700,600),
     ttl::String="",
 )
-    potential_func(coords) = SteinMD.potential_pce(inter, coords)
+    potential_func(coords) = Cairn.potential_pce(inter, coords)
     return plot_contours_2D(potential_func, xcoords, ycoords, "V(x)", fill=fill, lvls=lvls, cutoffs=cutoffs, res=res, ttl=ttl)
 end
 
@@ -235,13 +235,13 @@ function plot_basis(
     mx = length(xcoords) 
     my = length(ycoords)
     N = length(pce.basis)
-    Mset = SteinMD.TotalDegreeMset(pce.p, pce.d)
+    Mset = Cairn.TotalDegreeMset(pce.p, pce.d)
 
     bas_mat = Matrix{Vector}(undef, (mx,my))
     for i = 1:mx
         for j = 1:my
             coord = ustrip.([xcoords[i], ycoords[j]])
-            bas_mat[i,j] =  SteinMD.eval_basis(coord, pce.basis)
+            bas_mat[i,j] =  Cairn.eval_basis(coord, pce.basis)
         end
     end
 
@@ -251,7 +251,7 @@ function plot_basis(
         V_surf = [bas_mat[i,j][n] for i = 1:mx, j=1:my]
         M = Mset[n]
 
-        figs[n] = Figure(resolution = (700, 600))
+        figs[n] = Figure(size = (700, 600))
         axs[n] = Axis(figs[n][1, 1][1, 1], 
                     xlabel="x1", ylabel="x2",
                     limits=(

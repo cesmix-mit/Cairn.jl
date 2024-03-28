@@ -7,12 +7,12 @@ export
 function V(x, θ, inter::PolynomialChaos; dist_units = u"nm")
     inter.params = θ
     coord = SVector{2}(x) .* dist_units
-    return ustrip(SteinMD.potential_pce(inter, coord))
+    return ustrip(Cairn.potential_pce(inter, coord))
 end
 function ∇xV(x, θ, inter::PolynomialChaos; dist_units = u"nm")
     inter.params = θ
     coord = SVector{2}(x) .* dist_units
-    return Vector(ustrip.(SteinMD.force_pce(inter, coord)))
+    return Vector(ustrip.(Cairn.force_pce(inter, coord)))
 end
 ∇θV(x, θ, pce::PolynomialChaos; dist_units = u"nm") = eval_basis(x, pce)
 
@@ -32,12 +32,12 @@ end
 # potential and gradient functions for Himmelblau
 function V(x, θ, inter::Himmelblau; dist_units = u"nm")
     coord = SVector{2}(x) .* dist_units
-    return ustrip(SteinMD.potential_himmelblau(inter, coord))
+    return ustrip(Cairn.potential_himmelblau(inter, coord))
 end
 
 function ∇xV(x, θ, inter::Himmelblau; dist_units = u"nm")
     coord = SVector{2}(x) .* dist_units
-    return Vector(ustrip.(SteinMD.force_himmelblau(inter, coord)))
+    return Vector(ustrip.(Cairn.force_himmelblau(inter, coord)))
 end
 
 ∇θV(x, θ, inter::Himmelblau; dist_units = u"nm") = 0
@@ -45,12 +45,12 @@ end
 # potential and gradient functions for DoubleWell
 function V(x, θ, inter::DoubleWell; dist_units = u"nm")
     coord = SVector{2}(x) .* dist_units
-    return ustrip(SteinMD.potential_double_well(inter, coord))
+    return ustrip(Cairn.potential_double_well(inter, coord))
 end
 
 function ∇xV(x, θ, inter::DoubleWell; dist_units = u"nm")
     coord = SVector{2}(x) .* dist_units
-    return Vector(ustrip.(SteinMD.force_double_well(inter, coord)))
+    return Vector(ustrip.(Cairn.force_double_well(inter, coord)))
 end
 
 ∇θV(x, θ, inter::DoubleWell; dist_units = u"nm") = 0

@@ -35,7 +35,7 @@ function plot_surface(
         end
     end
 
-    fig = Figure(resolution = (700, 600))
+    fig = Figure(size = (700, 600))
     if plotangle == nothing
         ax = Axis3(fig[1, 1], 
                 aspect = (1,1,1),
@@ -83,7 +83,7 @@ function plot_surface(
     cutoff = nothing,
     plotangle = nothing,
 )
-    return plot_surface(inter, SteinMD.potential_double_well, xcoords, ycoords, cutoff=cutoff, plotangle=plotangle)
+    return plot_surface(inter, Cairn.potential_double_well, xcoords, ycoords, cutoff=cutoff, plotangle=plotangle)
 
 end
 
@@ -107,6 +107,6 @@ function plot_surface(
     cutoff = nothing,
     plotangle = nothing,
 )
-    return plot_surface(inter, SteinMD.potential_pce, xcoords, ycoords, cutoff=cutoff, plotangle=plotangle)
+    return plot_surface(inter, Cairn.potential_pce, xcoords, ycoords, cutoff=cutoff, plotangle=plotangle)
 end
 
