@@ -27,7 +27,31 @@ using PotentialLearning
 using ActiveSubspaces
 using Maxvol
 
+include("types.jl")
 
+include("interactions/doublewell.jl")
+include("interactions/himmelblau.jl")
+include("interactions/sinusoid.jl")
+include("interactions/pce.jl")
+include("interactions/muller_brown_rotated.jl")
+
+include("simulators/overdampedlangevin.jl")
+include("simulators/stochasticsvgd.jl")
+include("simulators/srld.jl")
+
+include("activelearning/triggers.jl")
+include("activelearning/distributions.jl")
+include("activelearning/kernels.jl")
+include("activelearning/ensembles.jl")
+include("activelearning/training.jl")
+include("activelearning/activelearning.jl")
+
+include("loggers/triggerlogger.jl")
+include("loggers/traininglogger.jl")
+include("loggers/stepcomponentlogger.jl")
+include("loggers/get_values.jl")
+
+# include("makie/makie.jl")
 
 
 

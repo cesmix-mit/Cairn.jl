@@ -1,4 +1,6 @@
+using Makie
 using CairoMakie
+using ActiveSubspaces
 
 include("plot_surface.jl")
 include("plot_contours.jl")
