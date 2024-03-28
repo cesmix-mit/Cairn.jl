@@ -27,7 +27,10 @@ jobs:
             Pkg.Registry.add(RegistrySpec(url = "https://github.com/cesmix-mit/CESMIX.git"))
             Pkg.Registry.add(RegistrySpec(url = "https://github.com/JuliaMolSim/MolSim.git"))
             Pkg.Registry.add(RegistrySpec(url = "https://github.com/ACEsuit/ACEregistry"))
+          
+            Pkg.develop(; url = "https://github.com/joannajzou/ActiveSubspaces.jl")
           '
+
         shell: bash
       - name: Install dependencies
         run: julia --project=docs/ -e 'using Pkg; Pkg.develop(PackageSpec(path=pwd())); Pkg.instantiate()'
