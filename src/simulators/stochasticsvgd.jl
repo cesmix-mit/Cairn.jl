@@ -77,9 +77,9 @@ function simulation_step!(ens::Vector{<:System},
         
         # add force components to loggers
         if has_step_property(sys)
-            sys.loggers.knl.observable = knl_t / M * sim.dt
-            sys.loggers.gradknl.observable = gradknl_t / M * sim.dt
-            sys.loggers.noise.observable = noise_t
+            # sys.loggers.knl.observable = knl_t / M * sim.dt
+            # sys.loggers.gradknl.observable = gradknl_t / M * sim.dt
+            # sys.loggers.noise.observable = noise_t
             sys.loggers.ksd.observable = ksd_t * sim.dt
         end
         run_loggers!(sys, neighbor_ens[i], step_n, run_loggers; n_threads=n_threads, ens_old=sim.sys_fix, ens_new=ksd=ksd_t)

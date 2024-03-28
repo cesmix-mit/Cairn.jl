@@ -62,7 +62,7 @@ function ActiveLearnRoutine(
         
         update(sim, sys, ref) = update_func(sim, sys, ref; kwargs...)
         train(sys, sys_train, ref) = train_func(sys, sys_train, ref; kwargs...)
-        return ActiveLearnRoutine(ref, mlip, sys_train, eval_int, trigger, burnin, update, train, train_steps, param_hist, error_hist)
+        return ActiveLearnRoutine(ref, mlip, sys_train, eval_int, trigger, error_hist, burnin, update, train, train_steps, param_hist)
 end
 
 
@@ -299,6 +299,18 @@ function remove_loggers(
         boundary=sys.boundary,
         general_inters=sys.general_inters,
     )
+end
+
+# redefine the system without loggers
+function remove_loggers(
+    ens::Vector{<:System},
+)
+    return [System(
+        atoms=sys.atoms,
+        coords=sys.coords,
+        boundary=sys.boundary,
+        general_inters=sys.general_inters,
+    ) for sys in ens]
 end
 
 """
