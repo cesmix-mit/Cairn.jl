@@ -22,4 +22,5 @@ makedocs(;
 deploydocs(;
     repo="github.com/cesmix-mit/Cairn.jl",
     devbranch="main",
+    push_preview = true,
 )
