@@ -24,7 +24,6 @@ using UnitfulAtomic
 using Molly
 using InteratomicPotentials
 using PotentialLearning
-using ActiveSubspaces
 using Maxvol
 
 include("types.jl")
@@ -39,12 +38,12 @@ include("simulators/overdampedlangevin.jl")
 include("simulators/stochasticsvgd.jl")
 include("simulators/srld.jl")
 
-include("activelearning/triggers.jl")
-include("activelearning/distributions.jl")
-include("activelearning/kernels.jl")
-include("activelearning/ensembles.jl")
-include("activelearning/training.jl")
-include("activelearning/activelearning.jl")
+# include("activelearning/triggers.jl")
+# include("activelearning/distributions.jl")
+# include("activelearning/kernels.jl")
+# include("activelearning/ensembles.jl")
+# include("activelearning/training.jl")
+# include("activelearning/activelearning.jl")
 
 include("loggers/triggerlogger.jl")
 include("loggers/traininglogger.jl")
