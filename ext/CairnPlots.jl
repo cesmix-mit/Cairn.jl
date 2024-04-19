@@ -11,6 +11,7 @@ module CairnPlots
 
 using Cairn
 using Molly
+using AtomisticQoIs
 using CairoMakie
 
 # TODO: remove this once everything works!

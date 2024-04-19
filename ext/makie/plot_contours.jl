@@ -1,4 +1,5 @@
 using Molly
+using AtomisticQoIs
 export plot_contours_2D
 
 function potential_grid_points(
@@ -189,7 +190,7 @@ function plot_density(
     inter::PolynomialChaos,
     xcoords::Vector,
     ycoords::Vector,
-    normint::Integrator;
+    normint::AtomisticQoIs.Integrator;
     kB=1.0u"kJ * K^-1 * mol^-1", # Maxwell-Boltzmann constant
     temp=1.0u"K", # temperature
     fill::Bool=false,
@@ -208,7 +209,7 @@ function plot_density(
     inter::GeneralInteraction,
     xcoords::Vector,
     ycoords::Vector,
-    normint::Integrator;
+    normint::AtomisticQoIs.Integrator;
     kB=1.0u"kJ * K^-1 * mol^-1", # Maxwell-Boltzmann constant
     temp=1.0u"K", # temperature
     fill::Bool=false,
