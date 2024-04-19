@@ -1,8 +1,8 @@
-# export plot_md_trajectory, plot_md_trajectory_hist
+export plot_md_trajectory, plot_md_trajectory_hist
 
 
 # plot single-trajectory MD
-function Cairn.plot_md_trajectory(
+function plot_md_trajectory(
     sys::System,
     contourgrid::Vector;
     fill::Bool=false,
@@ -35,7 +35,7 @@ end
 
 
 # plot single-trajectory MD and training points
-function Cairn.plot_md_trajectory(
+function plot_md_trajectory(
     sys::System,
     sys_train::Vector{<:System},
     contourgrid::Vector;
@@ -73,7 +73,7 @@ end
 
 
 # plot first and last position of ensemble MD
-function Cairn.plot_md_trajectory(
+function plot_md_trajectory(
     ens::Vector{<:System},
     contourgrid::Vector;
     fill::Bool=false,
@@ -117,42 +117,8 @@ function Cairn.plot_md_trajectory(
 end
 
 
-# plot first and last position of ensemble MD
-function Cairn.plot_md_trajectory(
-    ens::Vector{<:System},
-    sys_train::Vector{<:System},
-    contourgrid::Vector;
-    fill::Bool=false,
-    lvls::Union{String, Vector, StepRange, StepRangeLen}="linear",
-    showpath::Bool=false,
-)
-    # preprocess
-    xcoords, ycoords = contourgrid
-    inter = ens[1].general_inters[1]
-
-    # create figure
-    f, ax = plot_contours_2D(inter, xcoords, ycoords, fill=fill, lvls=lvls)
-    
-    for (i,sys) in enumerate(ens)
-        coordvals = reduce(hcat, get_values(sys.loggers.coords))'
-        # plot trajectory
-        if showpath == true
-            scatterlines!(ax, coordvals[:,1], coordvals[:,2], markersize=5)
-        else
-            scatter!(ax, coordvals[:,1], coordvals[:,2], markersize=5)
-        end
-    end
-    # plot training points
-    coordfix = reduce(hcat, [ustrip.(sys_i.coords)[1] for sys_i in sys_train])'
-    scatter!(ax, coordfix[:,1], coordfix[:,2], markersize=7, color=:black, label="train. points")
-
-    axislegend(ax)
-    return f
-end
-
-
 # plot snapshots of single-trajectory MD
-function Cairn.plot_md_trajectory_hist(
+function plot_md_trajectory_hist(
     sys::System,
     sys_train::Vector{<:System},
     contourgrid::Vector,
@@ -204,7 +170,7 @@ end
 
 
 # plot snapshots of ensemble MD
-function Cairn.plot_md_trajectory_hist(
+function plot_md_trajectory_hist(
     ens::Vector{<:System},
     sys_train::Vector{<:System},
     contourgrid::Vector,

@@ -1,8 +1,6 @@
-using Molly
-using AtomisticQoIs
+export plot_contours_2D
 
-
-function Cairn.potential_grid_points(
+function potential_grid_points(
     potential_func::Function,
     limits::Vector{<:Vector},
     step::Real;
@@ -31,7 +29,7 @@ end
 
 
 # general function for plotting contours in 2D
-function Cairn.plot_contours_2D(
+function plot_contours_2D(
     eval_function::Function,
     xcoords::Vector,
     ycoords::Vector,
@@ -60,7 +58,7 @@ function Cairn.plot_contours_2D(
         end
     end
 
-    fig = Figure(size = res)
+    fig = Figure(resolution = res)
     ax = Axis(fig[1, 1][1, 1], 
             xlabel="x1", ylabel="x2",
             limits=(
@@ -100,7 +98,7 @@ end
 
 
 # plot contours for DoubleWell
-function Cairn.plot_contours_2D(
+function plot_contours_2D(
     inter::DoubleWell,
     xcoords::Vector,
     ycoords::Vector;
@@ -109,12 +107,12 @@ function Cairn.plot_contours_2D(
     cutoffs::Tuple = (-Inf, Inf),
     res::Tuple = (700,600),
 )
-    potential_func(coords) = Cairn.potential_double_well(inter, coords)
+    potential_func(coords) = SteinMD.potential_double_well(inter, coords)
     return plot_contours_2D(potential_func, xcoords, ycoords, "V(x)", fill=fill, lvls=lvls, cutoffs=cutoffs, res=res)
 end
 
 # plot contours for Himmelblau
-function Cairn.plot_contours_2D(
+function plot_contours_2D(
     inter::Himmelblau,
     xcoords::Vector,
     ycoords::Vector;
@@ -124,12 +122,12 @@ function Cairn.plot_contours_2D(
     res::Tuple = (700,600),
     ttl::String = "",
 )
-    potential_func(coords) = Cairn.potential_himmelblau(inter, coords)
+    potential_func(coords) = SteinMD.potential_himmelblau(inter, coords)
     return plot_contours_2D(potential_func, xcoords, ycoords, "V(x)", fill=fill, lvls=lvls, cutoffs=cutoffs, res=res, ttl=ttl)
 end
 
 # plot contours for Sinusoid
-function Cairn.plot_contours_2D(
+function plot_contours_2D(
     inter::Sinusoid,
     xcoords::Vector,
     ycoords::Vector;
@@ -138,13 +136,13 @@ function Cairn.plot_contours_2D(
     cutoffs::Tuple = (-Inf, Inf),
     res::Tuple = (700,600),
 )
-    potential_func(coords) = Cairn.potential_sinusoid(inter, coords)
+    potential_func(coords) = SteinMD.potential_sinusoid(inter, coords)
     return plot_contours_2D(potential_func, xcoords, ycoords, "V(x)", fill=fill, lvls=lvls, cutoffs=cutoffs, res=res)
 end
 
 # plot contours for MullerBrown
-function Cairn.plot_contours_2D(
-    inter::Molly.MullerBrown,
+function plot_contours_2D(
+    inter::MullerBrown,
     xcoords::Vector,
     ycoords::Vector;
     fill::Bool=false,
@@ -157,7 +155,7 @@ function Cairn.plot_contours_2D(
 end
 
 # plot contours for MullerBrown
-function Cairn.plot_contours_2D(
+function plot_contours_2D(
     inter::MullerBrownRot,
     xcoords::Vector,
     ycoords::Vector;
@@ -171,7 +169,7 @@ function Cairn.plot_contours_2D(
 end
 
 # plot contours for PolynomialChaos
-function Cairn.plot_contours_2D(
+function plot_contours_2D(
     inter::PolynomialChaos,
     xcoords::Vector,
     ycoords::Vector;
@@ -181,16 +179,16 @@ function Cairn.plot_contours_2D(
     res::Tuple = (700,600),
     ttl::String="",
 )
-    potential_func(coords) = Cairn.potential_pce(inter, coords)
+    potential_func(coords) = SteinMD.potential_pce(inter, coords)
     return plot_contours_2D(potential_func, xcoords, ycoords, "V(x)", fill=fill, lvls=lvls, cutoffs=cutoffs, res=res, ttl=ttl)
 end
 
 
-function Cairn.plot_density(
+function plot_density(
     inter::PolynomialChaos,
     xcoords::Vector,
     ycoords::Vector,
-    normint::AtomisticQoIs.Integrator;
+    normint::Integrator;
     kB=1.0u"kJ * K^-1 * mol^-1", # Maxwell-Boltzmann constant
     temp=1.0u"K", # temperature
     fill::Bool=false,
@@ -205,11 +203,11 @@ function Cairn.plot_density(
 end
 
 
-function Cairn.plot_density(
+function plot_density(
     inter::GeneralInteraction,
     xcoords::Vector,
     ycoords::Vector,
-    normint::AtomisticQoIs.Integrator;
+    normint::Integrator;
     kB=1.0u"kJ * K^-1 * mol^-1", # Maxwell-Boltzmann constant
     temp=1.0u"K", # temperature
     fill::Bool=false,
@@ -226,7 +224,7 @@ end
 
 
 
-function Cairn.plot_basis(
+function plot_basis(
     pce::PolynomialChaos,
     xcoords::Vector,
     ycoords::Vector;
@@ -237,13 +235,13 @@ function Cairn.plot_basis(
     mx = length(xcoords) 
     my = length(ycoords)
     N = length(pce.basis)
-    Mset = Cairn.TotalDegreeMset(pce.p, pce.d)
+    Mset = SteinMD.TotalDegreeMset(pce.p, pce.d)
 
     bas_mat = Matrix{Vector}(undef, (mx,my))
     for i = 1:mx
         for j = 1:my
             coord = ustrip.([xcoords[i], ycoords[j]])
-            bas_mat[i,j] =  Cairn.eval_basis(coord, pce.basis)
+            bas_mat[i,j] =  SteinMD.eval_basis(coord, pce.basis)
         end
     end
 
@@ -253,7 +251,7 @@ function Cairn.plot_basis(
         V_surf = [bas_mat[i,j][n] for i = 1:mx, j=1:my]
         M = Mset[n]
 
-        figs[n] = Figure(size = (700, 600))
+        figs[n] = Figure(resolution = (700, 600))
         axs[n] = Axis(figs[n][1, 1][1, 1], 
                     xlabel="x1", ylabel="x2",
                     limits=(

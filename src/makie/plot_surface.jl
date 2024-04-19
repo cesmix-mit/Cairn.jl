@@ -1,8 +1,7 @@
-using Molly
-# export plot_surface
+export plot_surface
 
 # general function for plotting contours in 2D
-function Cairn.plot_surface(
+function plot_surface(
     inter,
     potential_function::Function,
     xcoords::Vector,
@@ -36,7 +35,7 @@ function Cairn.plot_surface(
         end
     end
 
-    fig = Figure(size = (700, 600))
+    fig = Figure(resolution = (700, 600))
     if plotangle == nothing
         ax = Axis3(fig[1, 1], 
                 aspect = (1,1,1),
@@ -77,37 +76,37 @@ end
 
 
 # plot contours for DoubleWell
-function Cairn.plot_surface(
+function plot_surface(
     inter::DoubleWell,
     xcoords::Vector,
     ycoords::Vector;
     cutoff = nothing,
     plotangle = nothing,
 )
-    return Cairn.plot_surface(inter, Cairn.potential_double_well, xcoords, ycoords, cutoff=cutoff, plotangle=plotangle)
+    return plot_surface(inter, SteinMD.potential_double_well, xcoords, ycoords, cutoff=cutoff, plotangle=plotangle)
 
 end
 
 # plot contours for MullerBrown
-function Cairn.plot_surface(
-    inter::Molly.MullerBrown,
+function plot_surface(
+    inter::MullerBrown,
     xcoords::Vector,
     ycoords::Vector;
     cutoff = nothing,
     plotangle = nothing,
 )
-    return Cairn.plot_surface(inter, Molly.potential_muller_brown, xcoords, ycoords, cutoff=cutoff, plotangle=plotangle)
+    return plot_surface(inter, Molly.potential_muller_brown, xcoords, ycoords, cutoff=cutoff, plotangle=plotangle)
 
 end
 
 # plot contours for PolynomialChaos
-function Cairn.plot_surface(
+function plot_surface(
     inter::PolynomialChaos,
     xcoords::Vector,
     ycoords::Vector;
     cutoff = nothing,
     plotangle = nothing,
 )
-    return Cairn.plot_surface(inter, Cairn.potential_pce, xcoords, ycoords, cutoff=cutoff, plotangle=plotangle)
+    return plot_surface(inter, SteinMD.potential_pce, xcoords, ycoords, cutoff=cutoff, plotangle=plotangle)
 end
 

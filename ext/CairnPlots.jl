@@ -14,8 +14,7 @@ using Molly
 using AtomisticQoIs
 using CairoMakie
 
-# TODO: remove this once everything works!
-__init__() = println("Extension was loaded!")
+__init__() = println("CairnPlots extension loaded")
 
 include("makie/plot_surface.jl")
 include("makie/plot_contours.jl")

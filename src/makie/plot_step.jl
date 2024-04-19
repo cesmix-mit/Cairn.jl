@@ -2,12 +2,7 @@ export plot_step, plot_step_hist
 
 
 # plot full history of step component for single-trajectory MD
-"""
-plot_step()
-
-Plots time history of components of the force update step.
-"""
-function Cairn.plot_step(
+function plot_step(
     sys::System,
     labels::Vector{String};
     logscl::Bool = false,
@@ -19,7 +14,7 @@ function Cairn.plot_step(
         throw(ArgumentError("loggers does not include StepComponentLogger"))
     end
     # create figure
-    fig = Figure(size = (800, 400))
+    fig = Figure(resolution = (800, 400))
     # set axes
     if logscl == true
         ax = Axis(fig[1, 1][1, 1], 
@@ -53,7 +48,7 @@ end
 
 
 # plot full history of step component for ensemble MD 
-function Cairn.plot_step(
+function plot_step(
     ens::Vector{<:System}, 
     label::String;
     logscl::Bool = false,
@@ -64,7 +59,7 @@ function Cairn.plot_step(
         throw(ArgumentError("loggers does not include StepComponentLogger"))
     end
     # create figure
-    fig = Figure(size = (800, 400))
+    fig = Figure(resolution = (800, 400))
     # set axes
     if logscl == true
         ax = Axis(fig[1, 1][1, 1], 
@@ -97,7 +92,7 @@ end
 
 
 # plot snapshots of the step component history for single-trajectory MD
-function Cairn.plot_step_hist(
+function plot_step_hist(
     loggers::NamedTuple,
     intervals::Vector, 
     labels::Vector{String};
@@ -114,7 +109,7 @@ function Cairn.plot_step_hist(
     axs = Vector{Axis}(undef, length(intervals))
 
     for i = 1:length(intervals)
-        figs[i] = Figure(size = (800, 400))
+        figs[i] = Figure(resolution = (800, 400))
         # set axes
         if logscl == true
             axs[i] = Axis(figs[i][1, 1][1, 1], 
@@ -145,7 +140,7 @@ end
 
 
 # plot snapshots of the step component history for ensemble MD
-function Cairn.plot_step_hist(
+function plot_step_hist(
     ens::Vector{<:System}, 
     intervals::Vector, 
     label::String;
@@ -161,7 +156,7 @@ function Cairn.plot_step_hist(
     axs = Vector{Axis}(undef, length(intervals))
 
     for i = 1:length(intervals)
-        figs[i] = Figure(size = (800, 400))
+        figs[i] = Figure(resolution = (800, 400))
         # set axes
         if logscl == true
             axs[i] = Axis(figs[i][1, 1][1, 1], 
@@ -195,7 +190,7 @@ function Cairn.plot_step_hist(
 end
 
 
-function Cairn.plot_step_mean(
+function plot_step_mean(
     ens::Vector{<:System}, 
     label::String;
     logscl::Bool = false,
@@ -206,7 +201,7 @@ function Cairn.plot_step_mean(
         throw(ArgumentError("loggers does not include StepComponentLogger"))
     end
     # create figure
-    fig = Figure(size = (800, 400))
+    fig = Figure(resolution = (800, 400))
     # set axes
     if logscl == true
         ax = Axis(fig[1, 1][1, 1], 
