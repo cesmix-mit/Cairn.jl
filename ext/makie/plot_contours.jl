@@ -1,3 +1,4 @@
+using Molly
 export plot_contours_2D
 
 function potential_grid_points(
@@ -142,7 +143,7 @@ end
 
 # plot contours for MullerBrown
 function plot_contours_2D(
-    inter::MullerBrown,
+    inter::Molly.MullerBrown,
     xcoords::Vector,
     ycoords::Vector;
     fill::Bool=false,

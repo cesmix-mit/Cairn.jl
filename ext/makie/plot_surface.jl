@@ -1,3 +1,4 @@
+using Molly
 export plot_surface
 
 # general function for plotting contours in 2D
@@ -89,7 +90,7 @@ end
 
 # plot contours for MullerBrown
 function plot_surface(
-    inter::MullerBrown,
+    inter::Molly.MullerBrown,
     xcoords::Vector,
     ycoords::Vector;
     cutoff = nothing,

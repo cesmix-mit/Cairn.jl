@@ -10,11 +10,11 @@ Notes: Julia package extension with plotting functions complementing Cairn.jl.
 module CairnPlots
 
 using Cairn
+using Molly
 using CairoMakie
 
 # TODO: remove this once everything works!
-__init__() = Base.get_extension(Cairn, :CairnPlots) # println("Extension was loaded!")
-
+__init__() = println("Extension was loaded!")
 
 include("makie/plot_surface.jl")
 include("makie/plot_contours.jl")
