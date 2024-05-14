@@ -275,7 +275,9 @@ function train_potential_ef!(
     b = reduce(vcat, [b_e, b_f])
 
     A_e = reduce(hcat, eval_basis.(xtrain, (pce,)))'
-    A_f = reduce(vcat, reduce(hcat, eval_grad_basis.(xtrain, (pce,)))')
+    force_descr = eval_grad_basis.(xtrain, (pce,))
+    force_descr = [reduce(hcat, fd) for fd in force_descr]
+    A_f = reduce(hcat, force_descr)'
     A = reduce(vcat, [A_e, A_f])
 
     W_e = wts[1]
