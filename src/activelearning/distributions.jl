@@ -73,7 +73,7 @@ function compute_fisher_div(ref, mlip, integrator)
     p = define_gibbs_dist(ref)
     q = define_gibbs_dist(mlip, θ=mlip.params)
     f = FisherDivergence(integrator)
-    return compute_discrepancy(p, q, f)
+    return compute_divergence(p, q, f)
 end
 
 function compute_rmse(ref, mlip, integrator)
