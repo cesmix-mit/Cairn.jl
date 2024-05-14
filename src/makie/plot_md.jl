@@ -4,13 +4,12 @@ export plot_md_trajectory, plot_md_trajectory_hist
 # plot single-trajectory MD
 function plot_md_trajectory(
     sys::System,
-    contourgrid::Vector;
+    coord_grid::Vector;
     fill::Bool=false,
     lvls::Union{String, Vector, StepRange, StepRangeLen}="linear",
     showpath::Bool=false,
 )
     # preprocess
-    xcoords, ycoords = contourgrid
     inter = sys.general_inters[1]
 
     if fill == true
@@ -22,7 +21,7 @@ function plot_md_trajectory(
     end 
 
     # create figure
-    f, ax = plot_contours_2D(inter, xcoords, ycoords, fill=fill, lvls=lvls)
+    f, ax = plot_contours_2d(inter, coord_grid, fill=fill, lvls=lvls)
     # plot trajectory
     coordvals = reduce(hcat, get_values(sys.loggers.coords))'
     if showpath == true
@@ -38,13 +37,12 @@ end
 function plot_md_trajectory(
     sys::System,
     sys_train::Vector{<:System},
-    contourgrid::Vector;
+    coord_grid::Vector;
     fill::Bool=false,
     lvls::Union{String, Vector, StepRange, StepRangeLen}="linear",
     showpath::Bool=false,
 )
     # preprocess
-    xcoords, ycoords = contourgrid
     inter = sys.general_inters[1]
 
     if fill == true
@@ -56,7 +54,7 @@ function plot_md_trajectory(
     end 
 
     # create figure
-    f, ax = plot_contours_2D(inter, xcoords, ycoords, fill=fill, lvls=lvls)
+    f, ax = plot_contours_2d(inter, coord_grid, fill=fill, lvls=lvls)
     # plot trajectory
     coordvals = reduce(hcat, get_values(sys.loggers.coords))'
     if showpath == true
@@ -75,13 +73,12 @@ end
 # plot first and last position of ensemble MD
 function plot_md_trajectory(
     ens::Vector{<:System},
-    contourgrid::Vector;
+    coord_grid::Vector;
     fill::Bool=false,
     lvls::Union{String, Vector, StepRange, StepRangeLen}="linear",
     showpath::Bool=false,
 )
     # preprocess
-    xcoords, ycoords = contourgrid
     inter = ens[1].general_inters[1]
 
     if fill == true
@@ -93,7 +90,7 @@ function plot_md_trajectory(
     end 
 
     # create figure
-    f, ax = plot_contours_2D(inter, xcoords, ycoords, fill=fill, lvls=lvls)
+    f, ax = plot_contours_2d(inter, coord_grid, fill=fill, lvls=lvls)
     
     for (i,sys) in enumerate(ens)
         coordvals = reduce(hcat, get_values(sys.loggers.coords))'
@@ -121,7 +118,7 @@ end
 function plot_md_trajectory_hist(
     sys::System,
     sys_train::Vector{<:System},
-    contourgrid::Vector,
+    coord_grid::Vector,
     intervals::Vector;
     fill::Bool=false,
     lvls::Union{String, Vector, StepRange, StepRangeLen}="linear",
@@ -136,7 +133,6 @@ function plot_md_trajectory_hist(
     T = length(intervals)
     inter = sys.general_inters[1]
     params_hist = reduce(vcat, [[sys.loggers.params.history[1]], sys.loggers.params.history])
-    xcoords, ycoords = contourgrid
     x_md = reduce(hcat, get_values(sys.loggers.coords))
     x_train = reduce(hcat, reduce(vcat, get_values(get_coords(sys_train))))
     start = length(sys_train) - T+1
@@ -147,7 +143,7 @@ function plot_md_trajectory_hist(
     for i = 1:T
         # plot contours of potential
         inter.params = params_hist[i]
-        figs[i], axs[i] = plot_contours_2D(inter, xcoords, ycoords, fill=fill, lvls=lvls)
+        figs[i], axs[i] = plot_contours_2d(inter, coord_grid, fill=fill, lvls=lvls)
         
         if i != 1
             int_old = 1:intervals[i-1]
@@ -173,7 +169,7 @@ end
 function plot_md_trajectory_hist(
     ens::Vector{<:System},
     sys_train::Vector{<:System},
-    contourgrid::Vector,
+    coord_grid::Vector,
     intervals::Vector;
     fill::Bool=false,
     lvls::Union{String, Vector, StepRange, StepRangeLen}="linear",
@@ -188,7 +184,6 @@ function plot_md_trajectory_hist(
     T = length(intervals)
     inter = sys.general_inters[1]
     params_hist = reduce(vcat, [[sys.loggers.params.history[1]], sys.loggers.params.history, ])
-    xcoords, ycoords = contourgrid
     x_train = reduce(hcat, reduce(vcat, get_values(get_coords(sys_train))))
     nens = length(ens)
     nstart = length(sys_train) - (T-1)*nens
@@ -199,7 +194,7 @@ function plot_md_trajectory_hist(
     for i = 1:T
         # plot contours of potential
         inter.params = params_hist[i]
-        figs[i], axs[i] = plot_contours_2D(inter, xcoords, ycoords, fill=fill, lvls=lvls, ttl="Training iteration $i")
+        figs[i], axs[i] = plot_contours_2d(inter, coord_grid, fill=fill, lvls=lvls, ttl="Training iteration $i")
         # title!(axs[i], "Training iteration $i")
         if i != 1
             int_old = 1:intervals[i-1]

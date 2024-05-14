@@ -1,21 +1,41 @@
-export plot_contours_2D
+import Molly: potential_energy
+export coord_grid_2d, potential_grid_2d, plot_contours_2d
 
-function potential_grid_points(
-    potential_func::Function,
+
+## grid on 2d domain
+function coord_grid_2d(
+    limits::Vector{<:Vector},
+    step::Real;
+    dist_units = u"nm"
+)
+    xcoord = Vector(limits[1][1]:step:limits[1][2]) .* dist_units
+    ycoord = Vector(limits[2][1]:step:limits[2][2]) .* dist_units 
+    return [xcoord, ycoord]
+end
+
+
+## generic potential energy function with coord as argument
+function potential(inter, coord::SVector{2})
+    sys = let coords=[coord]; () -> [SVector{2}(coords)]; end # pseudo-struct
+    return potential_energy(inter, sys)
+end
+
+
+## grid across potential energy surface below cutoff
+function potential_grid_2d(
+    inter,
     limits::Vector{<:Vector},
     step::Real;
     cutoff = nothing,
     dist_units = u"nm",
 )
-    rng1 = Vector(limits[1][1]:step:limits[1][2]) .* dist_units
-    rng2 = Vector(limits[2][1]:step:limits[2][2]) .* dist_units 
-
-    coords = []
+    rng1, rng2 = coord_grid_2d(limits, step; dist_units=dist_units)
+    coords = SVector[]
 
     for i = 1:length(rng1)
         for j = 1:length(rng2)
             coord = SVector{2}([rng1[i],rng2[j]])
-            Vij = ustrip(potential_func(coord))
+            Vij = ustrip(potential(inter, coord))
             if typeof(cutoff) <: Real && Vij <= cutoff
                 append!(coords, [coord])
             elseif typeof(cutoff) <: Vector && cutoff[1] <= Vij <= cutoff[2]
@@ -28,11 +48,10 @@ function potential_grid_points(
 end
 
 
-# general function for plotting contours in 2D
-function plot_contours_2D(
+# general function for plotting contours in 2d
+function plot_contours_2d(
     eval_function::Function,
-    xcoords::Vector,
-    ycoords::Vector,
+    coord_grid::Vector,
     label::String;
     fill::Bool=false,
     lvls::Union{Integer, String, Vector, StepRange, StepRangeLen}="linear",
@@ -41,6 +60,7 @@ function plot_contours_2D(
     ttl::String="",
 )
 
+    xcoords, ycoords = coord_grid
     mx = length(xcoords) 
     my = length(ycoords)
     V_surf = Matrix{Float64}(undef, (mx,my))
@@ -97,116 +117,24 @@ function plot_contours_2D(
 end
 
 
-# plot contours for DoubleWell
-function plot_contours_2D(
-    inter::DoubleWell,
-    xcoords::Vector,
-    ycoords::Vector;
+## plot contours for 2d interatomic potential
+function plot_contours_2d(
+    inter,
+    coord_grid::Vector;
     fill::Bool=false,
     lvls::Union{Integer, String, Vector, StepRange, StepRangeLen}="linear",
     cutoffs::Tuple = (-Inf, Inf),
     res::Tuple = (700,600),
 )
-    potential_func(coords) = SteinMD.potential_double_well(inter, coords)
-    return plot_contours_2D(potential_func, xcoords, ycoords, "V(x)", fill=fill, lvls=lvls, cutoffs=cutoffs, res=res)
-end
-
-# plot contours for Himmelblau
-function plot_contours_2D(
-    inter::Himmelblau,
-    xcoords::Vector,
-    ycoords::Vector;
-    fill::Bool=false,
-    lvls::Union{Integer, String, Vector, StepRange, StepRangeLen}="linear",
-    cutoffs::Tuple = (-Inf, Inf),
-    res::Tuple = (700,600),
-    ttl::String = "",
-)
-    potential_func(coords) = SteinMD.potential_himmelblau(inter, coords)
-    return plot_contours_2D(potential_func, xcoords, ycoords, "V(x)", fill=fill, lvls=lvls, cutoffs=cutoffs, res=res, ttl=ttl)
-end
-
-# plot contours for Sinusoid
-function plot_contours_2D(
-    inter::Sinusoid,
-    xcoords::Vector,
-    ycoords::Vector;
-    fill::Bool=false,
-    lvls::Union{Integer, String, Vector, StepRange, StepRangeLen}="linear",
-    cutoffs::Tuple = (-Inf, Inf),
-    res::Tuple = (700,600),
-)
-    potential_func(coords) = SteinMD.potential_sinusoid(inter, coords)
-    return plot_contours_2D(potential_func, xcoords, ycoords, "V(x)", fill=fill, lvls=lvls, cutoffs=cutoffs, res=res)
-end
-
-# plot contours for MullerBrown
-function plot_contours_2D(
-    inter::MullerBrown,
-    xcoords::Vector,
-    ycoords::Vector;
-    fill::Bool=false,
-    lvls::Union{Integer, String, Vector, StepRange, StepRangeLen}="linear",
-    cutoffs::Tuple = (-Inf, Inf),
-    res::Tuple = (700,600),
-)
-    potential_func(coords) = Molly.potential_muller_brown(inter, coords)
-    return plot_contours_2D(potential_func, xcoords, ycoords, "V(x)", fill=fill, lvls=lvls, cutoffs=cutoffs, res=res)
-end
-
-# plot contours for MullerBrown
-function plot_contours_2D(
-    inter::MullerBrownRot,
-    xcoords::Vector,
-    ycoords::Vector;
-    fill::Bool=false,
-    lvls::Union{Integer, String, Vector, StepRange, StepRangeLen}="linear",
-    cutoffs::Tuple = (-Inf, Inf),
-    res::Tuple = (900,600),
-)
-    potential_func(coords) = Molly.potential_muller_brown(inter, coords) 
-    return plot_contours_2D(potential_func, xcoords, ycoords, "V(x)", fill=fill, lvls=lvls, cutoffs=cutoffs, res=res)
-end
-
-# plot contours for PolynomialChaos
-function plot_contours_2D(
-    inter::PolynomialChaos,
-    xcoords::Vector,
-    ycoords::Vector;
-    fill::Bool=false,
-    lvls::Union{Integer, String, Vector, StepRange, StepRangeLen}="linear",
-    cutoffs::Tuple = (-Inf, Inf),
-    res::Tuple = (700,600),
-    ttl::String="",
-)
-    potential_func(coords) = SteinMD.potential_pce(inter, coords)
-    return plot_contours_2D(potential_func, xcoords, ycoords, "V(x)", fill=fill, lvls=lvls, cutoffs=cutoffs, res=res, ttl=ttl)
+    potential_func = coords -> potential(inter, coords)
+    return plot_contours_2d(potential_func, coord_grid, "V(x)", fill=fill, lvls=lvls, cutoffs=cutoffs, res=res)
 end
 
 
-function plot_density(
-    inter::PolynomialChaos,
-    xcoords::Vector,
-    ycoords::Vector,
-    normint::Integrator;
-    kB=1.0u"kJ * K^-1 * mol^-1", # Maxwell-Boltzmann constant
-    temp=1.0u"K", # temperature
-    fill::Bool=false,
-    lvls::Union{Integer, String, Vector, StepRange, StepRangeLen}="linear",
-    cutoffs::Tuple = (-Inf, Inf),
-    res::Tuple = (700,600),
-)
-    β = ustrip(1 / (kB * temp))
-    p = define_gibbs_dist(inter, β=β, θ=inter.params)
-    density_func(coord) = updf(p, get_values(coord)) / normconst(p, normint)
-    return plot_contours_2D(density_func, xcoords, ycoords, "p(x)", fill=fill, lvls=lvls, cutoffs=cutoffs, res=res)
-end
-
-
+## plot density function for 2d interatomic potential
 function plot_density(
     inter::GeneralInteraction,
-    xcoords::Vector,
-    ycoords::Vector,
+    coord_grid::Vector,
     normint::Integrator;
     kB=1.0u"kJ * K^-1 * mol^-1", # Maxwell-Boltzmann constant
     temp=1.0u"K", # temperature
@@ -219,29 +147,47 @@ function plot_density(
     p = define_gibbs_dist(inter, β=β)
     Zp = normconst(p, normint)
     density_func(coord) = updf(p, get_values(coord)) / Zp
-    return plot_contours_2D(density_func, xcoords, ycoords, "p(x)", fill=fill, lvls=lvls, cutoffs=cutoffs, res=res)
+    return plot_contours_2d(density_func, coord_grid, "p(x)", fill=fill, lvls=lvls, cutoffs=cutoffs, res=res)
+end
+
+function plot_density(
+    inter::PolynomialChaos,
+    coord_grid::Vector,
+    normint::Integrator;
+    kB=1.0u"kJ * K^-1 * mol^-1", # Maxwell-Boltzmann constant
+    temp=1.0u"K", # temperature
+    fill::Bool=false,
+    lvls::Union{Integer, String, Vector, StepRange, StepRangeLen}="linear",
+    cutoffs::Tuple = (-Inf, Inf),
+    res::Tuple = (700,600),
+)
+    β = ustrip(1 / (kB * temp))
+    p = define_gibbs_dist(inter, β=β, θ=inter.params)
+    Zp = normconst(p, normint)
+    density_func(coord) = updf(p, get_values(coord)) / Zp
+    return plot_contours_2d(density_func, coord_grid, "p(x)", fill=fill, lvls=lvls, cutoffs=cutoffs, res=res)
 end
 
 
-
+## plot basis functions of PolynomialChaos
 function plot_basis(
     pce::PolynomialChaos,
-    xcoords::Vector,
-    ycoords::Vector;
+    coord_grid::Vector;
     fill::Bool=false,
     lvls::Union{Integer, String, Vector, StepRange, StepRangeLen}="linear",
     )
 
+    xcoords, ycoords = coord_grid
     mx = length(xcoords) 
     my = length(ycoords)
     N = length(pce.basis)
-    Mset = SteinMD.TotalDegreeMset(pce.p, pce.d)
+    Mset = Cairn.TotalDegreeMset(pce.p, pce.d)
 
     bas_mat = Matrix{Vector}(undef, (mx,my))
     for i = 1:mx
         for j = 1:my
             coord = ustrip.([xcoords[i], ycoords[j]])
-            bas_mat[i,j] =  SteinMD.eval_basis(coord, pce.basis)
+            bas_mat[i,j] =  Cairn.eval_basis(coord, pce.basis)
         end
     end
 
