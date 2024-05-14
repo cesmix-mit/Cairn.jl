@@ -28,18 +28,28 @@ using AtomisticQoIs
 using Maxvol
 
 include("types.jl")
+include("PotentialLearningExt.jl")
 
 include("interactions/doublewell.jl")
 include("interactions/himmelblau.jl")
 include("interactions/sinusoid.jl")
 include("interactions/pce.jl")
 include("interactions/muller_brown_rotated.jl")
+include("interactions/interatomicpotential.jl")
 
 include("simulators/overdampedlangevin.jl")
 include("simulators/stochasticsvgd.jl")
 include("simulators/srld.jl")
 
-include("activelearning/triggers.jl")
+include("triggers/triggers.jl")
+include("triggers/timeinterval.jl")
+include("triggers/maxkernel.jl")
+include("triggers/meanksd.jl")
+include("triggers/maxvol.jl")
+
+include("training/linear-learn.jl")
+include("training/train.jl")
+
 include("activelearning/distributions.jl")
 include("activelearning/kernels.jl")
 include("activelearning/ensembles.jl")
