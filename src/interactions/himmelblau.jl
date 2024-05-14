@@ -1,4 +1,4 @@
-import Molly: potential_energy, forces # GeneralInteraction, 
+import Molly: potential_energy, forces
 
 export Himmelblau
 
