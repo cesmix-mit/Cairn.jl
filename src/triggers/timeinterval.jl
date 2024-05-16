@@ -1,9 +1,5 @@
 export TimeInterval
 
-struct TimeInterval <: ActiveLearningTrigger
-    interval::Real
-end
-
 
 """
     TimeInterval(; interval::Real=1)
@@ -11,15 +7,24 @@ end
 An active learning trigger activated after a fixed number of simulation steps specified by `interval`.
 
 """
-function TimeInterval(; interval::Real=1)
-    return TimeInterval(interval)
+struct TimeInterval <: ActiveLearningTrigger
+    eval::Function
+    interval::Real
 end
+function TimeInterval(; interval::Real=1)
+    return TimeInterval(timeint, interval)
+end
+
+
+timeint(; step_n, interval) = (step_n % interval)
 
 
 function trigger_activated(
+    sys,
     trigger::TimeInterval;
-    step_n::Integer = 1,
+    step_n::Integer,
     kwargs...
 )
-    return (step_n % trigger.interval) == 0
+    return trigger.eval(; step_n=step_n, interval=trigger.interval) == 0
 end
+
