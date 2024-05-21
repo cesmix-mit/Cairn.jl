@@ -1,5 +1,6 @@
 
-import Molly: potential_energy, potential_muller_brown, forces, force_muller_brown
+# import AtomsCalculators: potential_energy, forces
+import Molly: potential_muller_brown, force_muller_brown
 export MullerBrownRot
 
 @doc raw"""
@@ -47,7 +48,7 @@ function MullerBrownRot(; A=SVector(-200.0, -100.0, -170.0, 15.0)u"kJ * mol^-1",
         A, a, b, c, x0, y0, R, force_units, energy_units)
 end
 
-@inline function potential_energy(inter::MullerBrownRot, sys, neighbors=nothing;
+@inline function AtomsCalculators.potential_energy(sys, inter::MullerBrownRot; neighbors=nothing,
                                             n_threads::Integer=Threads.nthreads())
     return sum(potential_muller_brown.(Ref(inter), sys.coords))
 end
@@ -67,7 +68,7 @@ end
     return res
 end
 
-@inline function forces(inter::MullerBrownRot, sys, neighbors=nothing;
+@inline function AtomsCalculators.forces(sys, inter::MullerBrownRot; neighbors=nothing,
                                   n_threads::Integer=Threads.nthreads())
     return force_muller_brown.(Ref(inter),sys.coords)
 end
