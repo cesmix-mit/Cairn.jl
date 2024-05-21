@@ -17,7 +17,10 @@ function MeanKSD(; thresh::Real=0.1)
 end
 
 
-meanksd(; ksd) = mean(norm.(get_values(ksd)))
+function meanksd(ens::Vector{<:System})
+    ksd = [sys.data["ksd"] for sys in ens]
+    return mean(norm.(get_values(ksd)))
+end
 
 
 function trigger_activated(

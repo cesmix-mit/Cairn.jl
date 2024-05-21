@@ -17,12 +17,12 @@ end
 
 # extrapolation grade from single trajectory
 function extrap_grade(
-    ;
-    sys::System,
+    sys::System;
+    sys_train::Vector{<:System},
     kwargs...
 )
-    A = sys.data.train_descriptors
-    B = compute_local_descriptors(sys)
+    A = Matrix(reduce(hcat, sum.(get_local_descriptors(sys_train)))')
+    B = sum(get_local_descriptors(sys))
 
     # select D-optimal subset using MaxVol
     # need long rectangular matrix, e. g. nrows(A) > ncol(A)
@@ -36,12 +36,12 @@ end
 
 # max extrapolation grade among ensemble trajectories
 function extrap_grade(
-    ;
-    ens::Vector{<:System},
+    ens::Vector{<:System};
+    sys_train::Vector{<:System},
     kwargs...
 )
-    A = ens[1].data.train_descriptors
-    B = Matrix(reduce(hcat, compute_local_descriptors.(ens))')
+    A = Matrix(reduce(hcat, sum.(get_local_descriptors(sys_train)))')
+    B = Matrix(reduce(hcat, sum.(get_local_descriptors(ens)))')
 
     # select D-optimal subset using MaxVol
     # need long rectangular matrix, e. g. nrows(A) > ncol(A)
@@ -56,8 +56,9 @@ end
 function trigger_activated(
     sys,
     trigger::MaxVol;
+    sys_train::Vector{<:System},
     kwargs...
 )
-    return trigger.eval(; sys=sys) > trigger.thresh
+    return trigger.eval(sys; sys_train=sys_train) > trigger.thresh
 end
 

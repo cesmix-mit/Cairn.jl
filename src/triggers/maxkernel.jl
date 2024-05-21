@@ -16,7 +16,10 @@ function MaxKernelEval(; thresh::Real=0.1)
     return MaxKernelEval(maxkerneval, thresh)
 end
 
-maxkerneval(; kernel) = Base.maximum(kernel)
+function maxkerneval(ens::Vector{<:System})
+    kernel = [sys.data["kernel"] for sys in ens]
+    return Base.maximum(kernel)
+end
 
 
 function trigger_activated(
@@ -24,5 +27,5 @@ function trigger_activated(
     trigger::MaxKernelEval;
     kwargs...
 )
-    return trigger.eval(; kernel=sys.kernel) < trigger.thresh
+    return trigger.eval(sys) < trigger.thresh
 end

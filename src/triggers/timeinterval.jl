@@ -16,7 +16,7 @@ function TimeInterval(; interval::Real=1)
 end
 
 
-timeint(; step_n, interval) = (step_n % interval)
+timeint(sys::System; step_n, interval) = (step_n % interval)
 
 
 function trigger_activated(
@@ -25,6 +25,6 @@ function trigger_activated(
     step_n::Integer,
     kwargs...
 )
-    return trigger.eval(; step_n=step_n, interval=trigger.interval) == 0
+    return trigger.eval(sys; step_n=step_n, interval=trigger.interval) == 0
 end
 
