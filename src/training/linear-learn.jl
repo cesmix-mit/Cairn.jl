@@ -8,16 +8,14 @@ function LinearProblem(
     f_flag = true
 )
 
-    coords = get_coords(sys_train)
-    xtrain = [ustrip.(coord[1]) for coord in coords]
-
     if e_flag
-        descriptors = eval_basis.(xtrain, (mlip,))
-        energies = [ustrip(potential_energy(ref, sys)) for sys in sys_train]
+        # TODO: try find_descriptors catch; end
+        descriptors = sum.(compute_local_descriptors.(sys_train, Ref(mlip)))
+        energies = AtomsCalculators.potential_energy.(sys_train, Ref(ref))
     end
     if f_flag 
-        force_descriptors = eval_grad_basis.(xtrain, (mlip,))
-        force = [ustrip.(Molly.forces(ref, sys)) for sys in sys_train]
+        force_descriptors = reduce(vcat, compute_force_descriptors.(sys_train, Ref(mlip)))
+        force = AtomsCalculators.forces.(sys_train, Ref(ref))
     end
 
 
@@ -28,7 +26,7 @@ function LinearProblem(
 
         p = UnivariateLinearProblem(
             descriptors,
-            energies,
+            ustrip.(energies),
             β,
             β0,
             [1.0],
@@ -40,11 +38,12 @@ function LinearProblem(
         β = zeros(dim)
         β0 = zeros(1)
 
-        force = [reduce(vcat, fi) for fi in force]
+        force = [reduce(vcat, ustrip.(fi)) for fi in force]
+
         force_descriptors = [reduce(hcat, fi) for fi in force_descriptors]
         p = UnivariateLinearProblem(
             force_descriptors,
-            force,
+            reduce(vcat, force),
             β,
             β0,
             [1.0],
@@ -62,11 +61,11 @@ function LinearProblem(
 
         β = zeros(dim)
         β0 = zeros(1)
-        force = [reduce(vcat, fi) for fi in force]
+        force = [reduce(vcat, ustrip.(fi)) for fi in force]
         force_descriptors = [reduce(hcat, fi) for fi in force_descriptors]
 
         p = CovariateLinearProblem(
-            energies,
+            ustrip.(energies),
             force,
             descriptors,
             force_descriptors,

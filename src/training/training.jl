@@ -1,5 +1,7 @@
 export train!
 
+abstract type TrainingObjective end
+
 function train!(
     sys::System,
     sys_train::Vector{<:System},
@@ -30,3 +32,6 @@ function train!(
         sys.general_inters = (mlip,)
     end
 end
+
+
+include("linear-learn.jl")
