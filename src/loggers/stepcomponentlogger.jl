@@ -1,4 +1,4 @@
-import Molly: GeneralObservableLogger, log_property!
+import Molly: log_property!
 
 export
     StepComponentLogger,
@@ -27,8 +27,7 @@ StepComponentLogger(T::DataType, n_steps::Integer; dims::Integer=3) = StepCompon
 
 
 function StepComponentLogger(n_steps::Integer; dims::Integer=3)
-    subtype = typeof(1.0*u"kJ * ps^2 * g^-1 * nm^-1")
-    T = Array{SArray{Tuple{dims}, subtype, 1, dims}, 1}
+    T = Vector{Array{SArray{Tuple{dims}, Quantity, 1, dims}, 1}}
     return StepComponentLogger(T, n_steps; dims=dims)
 end
 
@@ -37,10 +36,10 @@ Base.values(logger::StepComponentLogger) = logger.history
 
 
 function log_property!(logger::StepComponentLogger, s::System, neighbors=nothing,
-                        step_n::Integer=0; n_threads::Integer=Threads.nthreads(), kwargs...)
+                        step_n::Integer=0; n_threads::Integer=Threads.nthreads(), stepcomp=[], kwargs...)
+    logger.observable = stepcomp
     if (step_n % logger.n_steps) == 0
-        obs = logger.observable
-        push!(logger.history, obs)
+        push!(logger.history, stepcomp)
     end
 end
 
@@ -48,26 +47,7 @@ end
 function Base.show(io::IO, fl::StepComponentLogger{T}) where T
     print(io, "StepComponentLogger{", eltype(eltype(values(fl))), "} with n_steps ",
             fl.n_steps, ", ", length(values(fl)), " frames recorded for ",
-            length(values(fl)) > 0 ? length(first(values(fl))) : "?", " atoms")
+            length(values(fl)) > 0 ? length(values(fl)) : "?", " atoms")
 end
 
-
-"""
-    has_step_property(sys::System)
-    has_step_property(logger::Logger)
-
-Returns a Bool evaluating whether the system `sys` contains any loggers which are of type `StepComponentLogger`.
-"""
-function has_step_property(sys::System)
-    return any([typeof(logger) <: StepComponentLogger for logger in sys.loggers])
-end
-
-function has_step_property(loggers::NamedTuple)
-    return any([typeof(logger) <: StepComponentLogger for logger in loggers])
-end
-
-has_step_property(logger::StepComponentLogger) = true
-has_step_property(logger::TriggerLogger) = false
-has_step_property(logger::TrainingLogger) = false
-has_step_property(logger::GeneralObservableLogger) = false
 

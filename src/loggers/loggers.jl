@@ -1,5 +1,8 @@
 import PotentialLearning: get_values
 
+include("triggerlogger.jl")
+include("stepcomponentlogger.jl")
+
 """
     get_values(logger::Logger)
     get_values(qt::Vector)
@@ -26,3 +29,26 @@ end
 function get_values(qt::Real)
     return ustrip(qt)
 end
+
+
+
+"""
+    has_step_property(sys::System)
+    has_step_property(logger::Logger)
+
+Returns a Bool evaluating whether the system `sys` contains any loggers which are of type `StepComponentLogger`.
+"""
+function has_step_property(sys::System)
+    return any([typeof(logger) <: StepComponentLogger for logger in sys.loggers])
+end
+
+function has_step_property(loggers::NamedTuple)
+    return any([typeof(logger) <: StepComponentLogger for logger in loggers])
+end
+
+has_step_property(logger::StepComponentLogger) = true
+has_step_property(logger::TriggerLogger) = false
+has_step_property(logger::GeneralObservableLogger) = false
+
+
+
