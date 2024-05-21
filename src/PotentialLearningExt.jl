@@ -11,24 +11,46 @@ function compute_divergence(
     q::Gibbs,
     d::FisherDivergence,
 )
+    return fisher_divergence(p, q, d.int)
+end
+
+function fisher_divergence(
+    p::Gibbs,
+    q::Gibbs,
+    int::QuadIntegrator,
+)
     sp(x) = gradlogpdf(p, x)
     sq(x) = gradlogpdf(q, x)
 
-    if typeof(d.int) <: QuadIntegrator
-        Zp = normconst(p, d.int)
-        h(x) = updf(p, x)/Zp .* norm(sp(x) - sq(x))^2
-        return sum(d.int.w .* h.(d.int.ξ))
-    
-    elseif typeof(d.int) <: MCMC
-        xsamp = rand(p, d.int.n, d.int.sampler, d.int.ρ0) 
-        h = x -> norm(sp(x) - sq(x))^2
-        return sum(h.(xsamp)) / length(xsamp)
+    Zp = normconst(p, int)
+    h(x) = updf(p, x)/Zp .* norm(sp(x) - sq(x))^2
+    return sum(int.w .* h.(int.ξ))
+end 
 
-    elseif typeof(d.int) <: MCSamples
-        h = x -> norm(sp(x) - sq(x))^2
-        return sum(h.(d.int.xsamp)) / length(d.int.xsamp)
-        
-    end
-end
+function fisher_divergence(
+    p::Gibbs,
+    q::Gibbs,
+    int::MCMC,
+)
+    sp(x) = gradlogpdf(p, x)
+    sq(x) = gradlogpdf(q, x)
 
-export FisherDivergence
+    xsamp = rand(p, int.n, int.sampler, int.ρ0) 
+    h = x -> norm(sp(x) - sq(x))^2
+    return sum(h.(xsamp)) / length(xsamp)
+end 
+
+function fisher_divergence(
+    p::Gibbs,
+    q::Gibbs,
+    int::MCSamples,
+)
+    sp(x) = gradlogpdf(p, x)
+    sq(x) = gradlogpdf(q, x)
+
+    h = x -> norm(sp(x) - sq(x))^2
+    return sum(h.(int.xsamp)) / length(int.xsamp)
+end 
+
+
+export FisherDivergence, fisher_divergence
