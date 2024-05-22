@@ -1,4 +1,5 @@
 import PotentialLearning: get_values
+import Unitful: Quantity
 
 include("triggerlogger.jl")
 include("stepcomponentlogger.jl")
@@ -20,14 +21,6 @@ end
 
 function get_values(logger::TriggerLogger)
     return [ustrip.(values(logger)[i][1]) for i = 2:length(values(logger))]
-end
-
-function get_values(qt::Vector)
-    return [ustrip.(values(qt)[i]) for i in 1:length(values(qt))]
-end
-
-function get_values(qt::Real)
-    return ustrip(qt)
 end
 
 
