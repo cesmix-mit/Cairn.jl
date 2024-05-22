@@ -67,7 +67,10 @@ end
     e_descr = try
         sys.data["energy_descriptors"]
     catch
-        compute_local_descriptors(sys, inter; n_threads=n_threads)
+        compute_local_descriptors(sys, inter)
+    end
+    if length(e_descr) == 0 # at initialization
+        e_descr = compute_local_descriptors(sys, inter)
     end
     return sum(potential_pce.(Ref(inter), sys.coords, e_descr))
 end
@@ -82,7 +85,10 @@ end
     f_descr = try
         sys.data["force_descriptors"]
     catch
-        compute_force_descriptors(sys, inter; n_threads=n_threads)
+        compute_force_descriptors(sys, inter)
+    end
+    if length(f_descr) == 0 # at initialization
+        f_descr = compute_force_descriptors(sys, inter)
     end
     return force_pce.(Ref(inter), sys.coords, f_descr)
 end
@@ -137,7 +143,7 @@ end
 
 function eval_grad_basis(x::Vector, gbas::Vector)
     d = length(gbas)
-    gΦ = Vector{Vector}(undef, d)
+    gΦ = Vector{Vector{Float64}}(undef, d)
     for j = 1:d
         gΦ[j] = eval_basis(x, gbas[j])
     end
@@ -150,8 +156,7 @@ end
 
 function compute_local_descriptors(
     sys,
-    inter::PolynomialChaos=sys.general_inters[1];
-    n_threads::Integer=Threads.nthreads(),
+    inter::PolynomialChaos=sys.general_inters[1],
 )
     x = Vector.(get_values.(sys.coords))
     edescr = eval_basis.(x, Ref(inter))
@@ -160,8 +165,7 @@ function compute_local_descriptors(
 end
 function compute_force_descriptors(
     sys,
-    inter::PolynomialChaos=sys.general_inters[1];
-    n_threads::Integer=Threads.nthreads(),
+    inter::PolynomialChaos=sys.general_inters[1],
 )
     x = Vector.(get_values.(sys.coords))
     fdescr = eval_grad_basis.(x, Ref(inter))
