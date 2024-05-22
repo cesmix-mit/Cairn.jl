@@ -22,12 +22,14 @@ using AtomsBase
 using Unitful
 using UnitfulAtomic
 using Molly
+using AtomsCalculators
 using InteratomicPotentials
 using PotentialLearning
 using AtomisticQoIs
 using Maxvol
 
-include("types.jl")
+include("data/data.jl") # TODO: migrate to PotentialLearning
+
 include("PotentialLearningExt.jl")
 
 include("interactions/doublewell.jl")
@@ -37,30 +39,17 @@ include("interactions/pce.jl")
 include("interactions/muller_brown_rotated.jl")
 include("interactions/interatomicpotential.jl")
 
-include("simulators/overdampedlangevin.jl")
-include("simulators/stochasticsvgd.jl")
-include("simulators/srld.jl")
+include("simulators/simulators.jl")
 
 include("triggers/triggers.jl")
-include("triggers/timeinterval.jl")
-include("triggers/maxkernel.jl")
-include("triggers/meanksd.jl")
-include("triggers/maxvol.jl")
 
-include("training/linear-learn.jl")
-include("training/train.jl")
+include("training/training.jl")
 
-include("activelearning/distributions.jl")
-include("activelearning/kernels.jl")
-include("activelearning/ensembles.jl")
-include("activelearning/training.jl")
+include("loggers/loggers.jl")
+
+include("subsetselection/subsetselector.jl") # TODO: migrate to PotentialLearning
+
 include("activelearning/activelearning.jl")
-
-include("loggers/triggerlogger.jl")
-include("loggers/traininglogger.jl")
-include("loggers/stepcomponentlogger.jl")
-include("loggers/get_values.jl")
-
 
 
 
