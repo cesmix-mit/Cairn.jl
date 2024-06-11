@@ -64,14 +64,7 @@ end
 ## functions for computing potential energy and forces
 @inline function potential_energy(sys, inter::PolynomialChaos; neighbors=nothing,
     n_threads::Integer=Threads.nthreads())
-    e_descr = try
-        sys.data["energy_descriptors"]
-    catch
-        compute_local_descriptors(sys, inter)
-    end
-    if length(e_descr) == 0 # at initialization
-        e_descr = compute_local_descriptors(sys, inter)
-    end
+    e_descr = compute_local_descriptors(sys, inter)
     return sum(potential_pce.(Ref(inter), sys.coords, e_descr))
 end
 @inline function potential_pce(inter::PolynomialChaos, coord::SVector{2},
@@ -82,14 +75,7 @@ end
 
 @inline function forces(sys, inter::PolynomialChaos; neighbors=nothing,
     n_threads::Integer=Threads.nthreads())
-    f_descr = try
-        sys.data["force_descriptors"]
-    catch
-        compute_force_descriptors(sys, inter)
-    end
-    if length(f_descr) == 0 # at initialization
-        f_descr = compute_force_descriptors(sys, inter)
-    end
+    f_descr = compute_force_descriptors(sys, inter)
     return force_pce.(Ref(inter), sys.coords, f_descr)
 end
 @inline function force_pce(inter::PolynomialChaos, coord::SVector{2},
@@ -155,7 +141,7 @@ function eval_grad_basis(x::Vector, inter::PolynomialChaos)
 end
 
 function compute_local_descriptors(
-    sys,
+    sys::System,
     inter::PolynomialChaos=sys.general_inters[1],
 )
     x = Vector.(get_values.(sys.coords))
@@ -164,7 +150,7 @@ function compute_local_descriptors(
     return edescr
 end
 function compute_force_descriptors(
-    sys,
+    sys::System,
     inter::PolynomialChaos=sys.general_inters[1],
 )
     x = Vector.(get_values.(sys.coords))

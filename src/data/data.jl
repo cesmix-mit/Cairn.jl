@@ -68,9 +68,9 @@ function compute_local_descriptors(
     if pbar
         iter = ProgressBar(iter)
     end
-    e_des = Vector{LocalDescriptors}(undef, length(ds))
+    e_des = Vector(undef, length(ens))
     Threads.@threads for (j, sys) in iter
-        e_des[j] = LocalDescriptors(compute_local_descriptors(sys, inter))
+        e_des[j] = compute_local_descriptors(sys, inter)
     end
     return e_des
 end
@@ -94,9 +94,9 @@ function compute_force_descriptors(
     if pbar
         iter = ProgressBar(iter)
     end
-    f_des = Vector{ForceDescriptors}(undef, length(ds))
+    f_des = Vector(undef, length(ens))
     Threads.@threads for (j, sys) in iter
-        f_des[j] = ForceDescriptors([fi for fi in compute_force_descriptors(sys, inter)])
+        f_des[j] = [fi for fi in compute_force_descriptors(sys, inter)]
     end
     return f_des
 end
@@ -118,22 +118,9 @@ function TrainConfiguration(
 )
     e = Energy(potential_energy(sys, ref))
     f = Forces(forces(sys, ref))
-    ed = try 
-        LocalDescriptors(sys.data["energy_descriptors"])
-    catch 
-        LocalDescriptors(compute_local_descriptors(sys, mlip))
-    end
-    if length(ed) == 0
-        ed = LocalDescriptors(compute_local_descriptors(sys, mlip))
-    end
-    fd = try
-        ForceDescriptors(sys.data["force_descriptors"])
-    catch
-        ForceDescriptors(compute_force_descriptors(sys, mlip))
-    end
-    if length(fd) == 0
-        fd = ForceDescriptors(compute_force_descriptors(sys, mlip))
-    end
+    ed = LocalDescriptors(compute_local_descriptors(sys, mlip))
+    fd = ForceDescriptors(compute_force_descriptors(sys, mlip))
+
     return Configuration(e, f, ed, fd)
 end
 
