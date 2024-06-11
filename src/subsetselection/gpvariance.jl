@@ -1,8 +1,7 @@
 export GPVariance, get_subset
 
 struct GPVariance <: SubsetSelector
-    mean :: Vector
-    cov :: Matrix
+    var :: Vector
     batch_size :: Int
 end
 
@@ -12,18 +11,16 @@ function GPVariance(
     trainset::DataSet,
     f::Feature,
     k::Kernel;
-    batch_size=length(ds) ÷ 4,
+    batch_size = length(ds) ÷ 4,
     dt = LocalDescriptors,
 )
     Σ11 = KernelMatrix(trainset, f, k; dt = dt)
-    Σ12 = KernelMatrix(ds, trainset, f, k; dt = dt)
+    Σ12 = KernelMatrix(trainset, ds, f, k; dt = dt)
     Σ22 = KernelMatrix(ds, f, k; dt = dt)
 
-    μ1 = get_all_energies(trainset)
-    μ2 = (pinv(Σ11) * Σ12)' * μ1 # cond. mean
-    Σ2 = Σ22 - (pinv(Σ11) * Σ12)' * Σ12 # cond. cov.
-
-    return GPVariance(μ2, Σ2)
+    Σ2 = Σ22 - Σ12' * pinv(Σ11, 1e-4) * Σ12 # cond. cov.
+    σ = diag(Σ2)
+    return GPVariance(σ, batch_size)
 end
 
 
