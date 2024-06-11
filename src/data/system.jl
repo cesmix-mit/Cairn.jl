@@ -1,10 +1,17 @@
-import Molly: accelerations, Atom
-export get_atoms, get_coords, define_sys, define_ens, remove_loggers
+import Molly: accelerations, Atom, System
+export Ensemble, get_atoms, get_coords, define_ens, remove_loggers
 
 
 
+function convert_to_molly_sys(
+    sys::FlexibleSystem;
+    dist_units=u"nm",
+    mass_units=u"g/mol",
+    )
+    
+end
 """
-function define_sys(
+function System(
     inter,
     coords::Vector{<:Real};
     dist_units=u"nm",
@@ -19,7 +26,7 @@ function define_sys(
 Defines the System struct for a single-atom system.
 """
 # single atom system
-function define_sys(
+function System(
     inter,
     coord::Vector{<:Real};
     dist_units=u"nm",
@@ -54,7 +61,7 @@ function define_sys(
 
     return sys
 end
-function define_sys(
+function System(
     inter,
     coord::SVector; # with units
     dist_units=unit(coord[1]),
@@ -65,7 +72,7 @@ function define_sys(
     loggers=false,
     data=nothing,
 )
-    return define_sys(
+    return System(
         inter,
         get_values(coord);
         dist_units=dist_units,
@@ -80,7 +87,7 @@ end
 
 
 # multi-atom system
-function define_sys(
+function System(
     inter,
     coords::Vector{<:Vector{<:Real}};
     dist_units=u"nm",
@@ -117,7 +124,7 @@ function define_sys(
     return sys
 end
 
-function define_sys(
+function System(
     inter,
     coords::Vector{<:SVector};
     dist_units=unit(coords[1][1]),
@@ -128,7 +135,7 @@ function define_sys(
     loggers=false,
     data=nothing,
 )
-    return define_sys(
+    return System(
         inter,
         [get_values(coord) for coord in coords];
         dist_units=dist_units,
@@ -144,7 +151,7 @@ end
 
 
 """
-function define_ens(
+function Ensemble(
     inter,
     coords::Vector;
     dist_units=u"nm",
@@ -158,7 +165,7 @@ function define_ens(
 
 Defines a Vector{<:System} for an ensemble of systems.
 """
-function define_ens(
+function Ensemble(
     inter,
     coords::Vector;
     dist_units=u"nm",
@@ -169,7 +176,7 @@ function define_ens(
     loggers=false,
     data=nothing,
 )
-    ens =[define_sys(
+    ens = [System(
             inter,
             coord;
             dist_units=dist_units,

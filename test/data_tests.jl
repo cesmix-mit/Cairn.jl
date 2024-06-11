@@ -1,4 +1,5 @@
 using Cairn, Molly
+using PotentialLearning
 using Unitful
 using StaticArrays
 using SpecialPolynomials
@@ -22,21 +23,21 @@ using Test
 
     
 
-    ## test define_sys and define_ens
-    sysa = define_sys(pce, xtrain[1],
+    ## test System and Ensemble
+    sysa = System(pce, xtrain[1]) # single atom system
+    sysb = Ensemble(pce, xtrain) # ensemble of single-atom systems
+    sysc = System(pce, xtrain,
         data=Dict(
             "energy_descriptors" => Float64[],
             "force_descriptors" => Vector[],
         )
-    ) # single atom system
-    sysb = define_ens(pce, xtrain) # ensemble of single-atom systems
-    sysc = define_sys(pce, xtrain) # multi-atom system
+    ) # multi-atom system
     
-    sysd = define_sys(pce, conftrain[1]) # single atom system
-    syse = define_ens(pce, conftrain) # ensemble of single-atom systems
-    sysf = define_sys(pce, conftrain) # multi-atom system
+    sysd = System(pce, conftrain[1]) # single atom system
+    syse = Ensemble(pce, conftrain) # ensemble of single-atom systems
+    sysf = System(pce, conftrain) # multi-atom system
     
-    sysg = define_sys(pce, xtrain[1], 
+    sysg = System(pce, xtrain[1], 
         loggers=(coords=CoordinateLogger(10; dims=2),),
     ) # with logger
     sysh = remove_loggers(sysg) # without logger
@@ -57,19 +58,19 @@ using Test
 
 
     ## test ConfigurationData quantities 
-    e = potential_energy(sysa, pce)
+    e = potential_energy(sysc, pce)
     edata = Energy(e)
-    f = forces(sysa, pce)
+    f = forces(sysc, pce)
     fdata = Forces(f)
-    ed = compute_local_descriptors(sysa, pce) # populates sysa.data
+    ed = compute_local_descriptors(sysc, pce) # populates sysa.data
     edescr = LocalDescriptors(ed)
-    fd = compute_force_descriptors(sysa, pce) # populates sysa.data
+    fd = compute_force_descriptors(sysc, pce) # populates sysa.data
     fdescr = ForceDescriptors(fd)
 
     c = Configuration(edata, fdata, edescr, fdescr)
 
-    @test sysa.data["energy_descriptors"] != Float64[]
-    @test sysa.data["force_descriptors"] != Vector[]
+    @test sysc.data["energy_descriptors"] != Float64[]
+    @test sysc.data["force_descriptors"] != Vector[]
 
     @test typeof(e) <: Quantity
     @test get_values(e) == edata.d
