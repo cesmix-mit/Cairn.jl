@@ -27,6 +27,7 @@ using InteratomicPotentials
 using PotentialLearning
 using AtomisticQoIs
 using Maxvol
+using ProgressBars
 
 include("data/data.jl") # TODO: migrate to PotentialLearning
 
