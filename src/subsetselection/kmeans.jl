@@ -17,7 +17,7 @@ function get_random_subset(
     a = assignments(res) # get the assignments of points to clusters
     c = counts(res) # get the cluster sizes
 
-    prop = c ./ length(e_desc)
+    prop = c ./ length(km.desc)
     nsamp = Int.(ceil.(prop .* km.batch_size))
     indices = Int64[]
     for (i,n) in enumerate(nsamp)
