@@ -1,3 +1,4 @@
+import PotentialLearning: get_random_subset
 export KMeans
 
 struct KMeans <: SubsetSelector

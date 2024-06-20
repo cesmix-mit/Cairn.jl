@@ -27,6 +27,7 @@ using InteratomicPotentials
 using PotentialLearning
 using AtomisticQoIs
 using Maxvol
+using Clustering
 using ProgressBars
 
 include("data/data.jl") # TODO: migrate to PotentialLearning
