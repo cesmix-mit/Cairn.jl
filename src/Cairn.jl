@@ -38,7 +38,7 @@ include("interactions/himmelblau.jl")
 include("interactions/sinusoid.jl")
 include("interactions/pce.jl")
 include("interactions/muller_brown_rotated.jl")
-include("interactions/interatomicpotential.jl")
+# include("interactions/interatomicpotential.jl")
 
 include("simulators/simulators.jl")
 

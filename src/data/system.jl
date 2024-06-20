@@ -3,13 +3,12 @@ export Ensemble, get_atoms, get_coords, define_ens, remove_loggers
 
 
 
-function convert_to_molly_sys(
-    sys::FlexibleSystem;
-    dist_units=u"nm",
-    mass_units=u"g/mol",
-    )
-    
-end
+# function convert_to_molly_sys(
+#     sys::FlexibleSystem;
+#     dist_units=u"nm",
+#     mass_units=u"g/mol",
+#     )
+# end
 """
 function System(
     inter,
