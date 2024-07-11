@@ -1,7 +1,5 @@
 export
     ActiveLearningTrigger,
-    UpperThreshold,
-    LowerThreshold,
     trigger_activated
 
 """
@@ -11,16 +9,6 @@ Abstract type for defining criteria triggering the active learning step during s
 abstract type ActiveLearningTrigger end
 
 
-struct UpperThreshold <: ActiveLearningTrigger
-    eval::Function
-    thresh::Real
-end
-
-struct LowerThreshold <: ActiveLearningTrigger
-    eval::Function
-    thresh::Real
-end
-
 
 """
     trigger_activated(trigger::ActiveLearningTrigger, kwargs...)
@@ -28,19 +16,25 @@ end
 
 A function which returns a Bool of whether or not the trigger for active learning is activated.
 """
+trigger_activated(sys, trigger::Bool; kwargs...) = trigger
+
+
+## evaluate multiple triggers in order
 function trigger_activated(
-    trigger::UpperThreshold;
-    kwargs...
+    sys::Union{System, Vector{<:System}},
+    triggers::Tuple{<:ActiveLearningTrigger};
+    sys_train=nothing,
+    step_n::Integer=1,
 )
-    return trigger.eval(; kwargs...) < trigger.thresh
+    for trigger in triggers
+        if trigger_activated(sys, trigger; sys_train=sys_train, step_n=step_n)
+            return true
+        end
+    end
 end
 
-function trigger_activated(
-    trigger::LowerThreshold;
-    kwargs...
-)
-    return trigger.eval(; kwargs...) > trigger.thresh
-end
 
-
-trigger_activated(trigger::Bool; kwargs...) = trigger
+include("timeinterval.jl")
+include("maxkernel.jl")
+include("meanksd.jl")
+include("maxvol.jl")

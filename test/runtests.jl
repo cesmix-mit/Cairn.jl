@@ -1,6 +1,6 @@
-using Cairn
-using Test
+using SafeTestsets
 
-@testset "Cairn.jl" begin
-    # Write your tests here.
-end
+@safetestset "System and Data Tests" begin include("data_tests.jl") end
+# @safetestset "QoI Int. Tests" begin include("qoi_integration_tests.jl") end
+
+

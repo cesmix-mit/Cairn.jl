@@ -98,7 +98,7 @@ function plot_md_trajectory(
         if showpath == true
             scatterlines!(ax, coordvals[:,1], coordvals[:,2], markersize=5)
         else
-            scatter!(ax, coordvals[:,1], coordvals[:,2], markersize=5)
+            # scatter!(ax, coordvals[:,1], coordvals[:,2], markersize=5)
         end
         # plot start and end points
         if i == 1

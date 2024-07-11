@@ -1,4 +1,4 @@
-import Molly: potential_energy, forces 
+import AtomsCalculators: potential_energy, forces
 
 export Sinusoid
 
@@ -28,7 +28,7 @@ function Sinusoid(;
         force_units, energy_units)
 end 
 
-@inline function potential_energy(inter::Sinusoid, sys, neighbors=nothing;
+@inline function potential_energy(sys, inter::Sinusoid; neighbors=nothing,
                                             n_threads::Integer=Threads.nthreads())
     return sum(potential_sinusoid.(Ref(inter), sys.coords))
 end
@@ -41,7 +41,7 @@ end
     return res * inter.energy_units
 end
 
-@inline function forces(inter::Sinusoid, sys, neighbors=nothing;
+@inline function forces(sys, inter::Sinusoid; neighbors=nothing,
                                   n_threads::Integer=Threads.nthreads())
     return force_sinusoid.(Ref(inter),sys.coords)
 end

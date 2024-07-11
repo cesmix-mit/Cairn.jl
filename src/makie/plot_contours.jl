@@ -1,4 +1,4 @@
-import Molly: potential_energy
+import AtomsCalculators: potential_energy
 export coord_grid_2d, potential_grid_2d, plot_contours_2d
 
 
@@ -17,7 +17,7 @@ end
 ## generic potential energy function with coord as argument
 function potential(inter, coord::SVector{2})
     sys = let coords=[coord]; () -> [SVector{2}(coords)]; end # pseudo-struct
-    return potential_energy(inter, sys)
+    return potential_energy(sys, inter)
 end
 
 

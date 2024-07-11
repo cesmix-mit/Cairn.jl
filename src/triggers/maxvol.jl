@@ -1,7 +1,6 @@
 export MaxVol
 
 struct MaxVol <: ActiveLearningTrigger
-    feature_func::Function
     eval::Function
     thresh::Real
 end
@@ -12,56 +11,54 @@ end
 An active learning trigger activated after the D-optimality based extrapolation grade exceeds a threshold `thresh`.
 
 """
-function MaxVol(feature_func; thresh::Real=1.0)
-    return MaxVol(feature_func, extrap_grade, thresh)
+function MaxVol(; thresh::Real=1.0)
+    return MaxVol(extrap_grade, thresh)
 end
 
+# extrapolation grade from single trajectory
 function extrap_grade(
-    trigger::MaxVol;
-    ens_old::Vector{<:System},
-    ens_new::Vector{<:System},
+    sys::System;
+    sys_train::Vector{<:System},
     kwargs...
 )
-    N = length(ens_old)
-    ens_all = reduce(vcat, [ens_old, ens_new])
-    A = Matrix(trigger.feature_func(ens_old))
-    A_all = Matrix(trigger.feature_func(ens_all))
+    A = Matrix(reduce(hcat, sum.(get_local_descriptors(sys_train)))')
+    B = sum(get_local_descriptors(sys))
+
+    # select D-optimal subset using MaxVol
+    # need long rectangular matrix, e. g. nrows(A) > ncol(A)
     rows, _ = maxvol!(A)
-    γ = maximum(abs.(A_all*A[rows,:]), dims=2)
-    γ_new = γ[N+1:end]
-    return γ_new
+
+    # compute extrapolation grade
+    γ = maximum(abs.(B*pinv(A[rows,:])), dims=2)
+    return γ
 end
 
-# function extrap_grade(
-#     trigger::MaxVol;
-#     ens_old::Vector{<:System},
-#     ens_new::System,
-#     kwargs...
-# )
-#     N = length(ens_old)
-#     ens_all = reduce(vcat, [ens_old, ens_new])
-#     A = Matrix(trigger.feature_func(ens_old))
-#     A_all = Matrix(trigger.feature_func(ens_all))
-#     rows, _ = maxvol!(A)
-#     γ = maximum(abs.(A_all*A[rows,:]), dims=2)
-#     return γ[end]
-# end
+
+# max extrapolation grade among ensemble trajectories
+function extrap_grade(
+    ens::Vector{<:System};
+    sys_train::Vector{<:System},
+    kwargs...
+)
+    A = Matrix(reduce(hcat, sum.(get_local_descriptors(sys_train)))')
+    B = Matrix(reduce(hcat, sum.(get_local_descriptors(ens)))')
+
+    # select D-optimal subset using MaxVol
+    # need long rectangular matrix, e. g. nrows(A) > ncol(A)
+    rows, _ = maxvol!(A)
+
+    # compute extrapolation grade
+    γ = maximum(abs.(B*pinv(A[rows,:])), dims=2)
+    return maximum(γ)
+end
 
 
 function trigger_activated(
+    sys,
     trigger::MaxVol;
-    ens_old::Vector{<:System},
-    ens_new::Vector{<:System},
+    sys_train::Vector{<:System},
     kwargs...
 )
-    return maximum(trigger.eval(trigger; ens_old=ens_old, ens_new=ens_new)) > trigger.thresh
+    return trigger.eval(sys; sys_train=sys_train) > trigger.thresh
 end
 
-# function trigger_activated(
-#     trigger::MaxVol;
-#     ens_old::Vector{<:System},
-#     ens_new::System,
-#     kwargs...
-# )
-#     return maximum(trigger.eval(trigger; ens_old=ens_old, ens_new=ens_new)) > trigger.thresh
-# end
