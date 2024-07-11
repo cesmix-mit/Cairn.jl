@@ -24,5 +24,5 @@ function get_random_subset(
         id = StatsBase.sample(findall(x -> x == i, a), n, replace=false)
         append!(indices, id)
     end
-    return indices
+    return StatsBase.sample(indices, km.batch_size, replace=false)
 end
