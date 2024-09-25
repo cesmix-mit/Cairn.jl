@@ -1,6 +1,6 @@
 include("alroutine.jl")
 include("aldata.jl")
-include("distributions.jl")
+# include("distributions.jl")
 include("kernels.jl")
 
 

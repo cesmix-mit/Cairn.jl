@@ -25,7 +25,6 @@ using Molly
 using AtomsCalculators
 using InteratomicPotentials
 using PotentialLearning
-using AtomisticQoIs
 using Maxvol
 using Clustering
 using ProgressBars
