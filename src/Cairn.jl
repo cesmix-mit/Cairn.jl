@@ -31,7 +31,7 @@ using ProgressBars
 
 include("data/data.jl") # TODO: migrate to PotentialLearning
 
-include("PotentialLearningExt.jl")
+# include("PotentialLearningExt.jl")
 
 include("interactions/doublewell.jl")
 include("interactions/himmelblau.jl")
