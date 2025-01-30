@@ -111,6 +111,11 @@ function construct_grad_basis(p::Int, d::Int, BasisFamily)
     return gbas
 end
 
+function eval_basis(x::Real, bas::Vector)
+    N = length(bas)
+    Φ = [bas[n][1](x) for n = 1:N]
+    return Φ
+end
 function eval_basis(x::Vector, bas::Vector)
     N = length(bas)
     Φ = Vector{Float64}(undef, N)
@@ -127,6 +132,9 @@ function eval_basis(x::Vector, inter::PolynomialChaos)
     return eval_basis(xs, inter.basis)
 end
 
+function eval_grad_basis(x::Real, gbas::Vector)
+    return [eval_basis(x, gbas[1])]
+end
 function eval_grad_basis(x::Vector, gbas::Vector)
     d = length(gbas)
     gΦ = Vector{Vector{Float64}}(undef, d)
@@ -135,7 +143,7 @@ function eval_grad_basis(x::Vector, gbas::Vector)
     end
     return gΦ
 end
-function eval_grad_basis(x::Vector, inter::PolynomialChaos)
+function eval_grad_basis(x::Union{Vector, Real}, inter::PolynomialChaos)
     xs = rescale(x, inter.xscl, domain(inter))
     return eval_grad_basis(xs, inter.gbasis)
 end
