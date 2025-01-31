@@ -2,22 +2,22 @@ import PotentialLearning: get_random_subset
 export KMeans
 
 struct KMeans <: SubsetSelector
-    assign :: Vector{<:Int}
-    c :: Vector{<:Int}
+    assign :: Vector
+    c :: Vector
     batch_size :: Int
 end
 # function KMeans(assign::Vector, c::Vector, batch_size::Int)
 #     return KMeans(assign, c, batch_size)
 # end
-function KMeans(desc::Vector, k::Int, batch_size::Int)
-    A = Matrix(reduce(hcat, desc))
-    res = kmeans(A, k)
-    return KMeans(assignments(res), counts(res), batch_size)
-end
-function KMeans(dist::Union{Symmetric{T, Matrix{T}}, Matrix{T}}, k::Int, batch_size::Int) where {T}
-    res = kmedoids(dist, k)
-    return KMeans(assignments(res), counts(res), batch_size)
-end
+# function KMeans(desc::Vector, k::Int, batch_size::Int)
+#     A = Matrix(reduce(hcat, desc))
+#     res = kmeans(A, k)
+#     return KMeans(assignments(res), counts(res), batch_size)
+# end
+# function KMeans(dist::Union{Symmetric{T, Matrix{T}}, Matrix{T}}, k::Int, batch_size::Int) where {T}
+#     res = kmedoids(dist, k)
+#     return KMeans(assignments(res), counts(res), batch_size)
+# end
 
 function get_random_subset(
     km::KMeans,
